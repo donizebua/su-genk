@@ -1,6 +1,6 @@
-# 🔥 FireFighter Robot — Autonomous Wall Following Robot
+# 🔥 Su-Genk --  Autonomous FireFighter Wall Following Robot
 
-FireFighter adalah robot otomatis yang dapat berjalan lurus mengikuti jalur di antara dua dinding dan melakukan belokan 90° secara cerdas menggunakan sensor **IMU MPU6050** dan **3 sensor ultrasonik HC-SR04**. Robot ini dirancang untuk tetap berada di tengah jalur dan mengambil keputusan arah secara mandiri.
+Su-Genk adalah robot otomatis yang dapat berjalan lurus mengikuti jalur di antara dua dinding dan melakukan turn 90° secara cerdas menggunakan sensor **IMU MPU6050** dan **3 sensor ultrasonik HC-SR04**. Robot ini dirancang untuk tetap berada di tengah jalur dan mengambil keputusan arah secara mandiri.
 
 ---
 
@@ -25,8 +25,7 @@ FireFighter adalah robot otomatis yang dapat berjalan lurus mengikuti jalur di a
    - Selisih sudut dari arah lurus (`changePWM_sudut`)
    - Selisih jarak dari dinding (`changePWM_jarak`)
 5. **Rumus PWM akhir**:
-    PWM_kiri = PWM_dasar_kiri + changePWM_sudut_kiri + changePWM_jarak_kiri
-    PWM_kanan = PWM_dasar_kanan + changePWM_sudut_kanan + changePWM_jarak_kanan
+   <pre> ``` PWM_kiri = PWM_dasar_kiri + changePWM_sudut_kiri + changePWM_jarak_kiri PWM_kanan = PWM_dasar_kanan + changePWM_sudut_kanan + changePWM_jarak_kanan ``` </pre>
 6. Jika sudut berada di **domain kiri (1–179°)** → PWM motor kiri ditambah (belok kanan).
 7. Jika sudut berada di **domain kanan (181–359°)** → PWM motor kanan ditambah (belok kiri).
 8. Jika **jarak sensor < offset (mis. 15 cm)** → PWM motor sisi itu ditambah agar menjauh dari dinding.
