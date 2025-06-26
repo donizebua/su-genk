@@ -26,7 +26,7 @@ Su-Genk adalah robot otomatis yang dapat berjalan lurus mengikuti jalur di antar
    - Selisih jarak dari dinding (`changePWM_jarak`)
 5. **Rumus PWM akhir**:
 <pre> PWM_kiri = PWM_dasar_kiri + changePWM_sudut_kiri + changePWM_jarak_kiri
-   PWM_kanan = PWM_dasar_kanan + changePWM_sudut_kanan + changePWM_jarak_kanan</pre>
+PWM_kanan = PWM_dasar_kanan + changePWM_sudut_kanan + changePWM_jarak_kanan</pre>
 6. Jika sudut berada di **domain kiri (1–179°)** → PWM motor kiri ditambah (belok kanan).
 7. Jika sudut berada di **domain kanan (181–359°)** → PWM motor kanan ditambah (belok kiri).
 8. Jika **jarak sensor < offset (mis. 15 cm)** → PWM motor sisi itu ditambah agar menjauh dari dinding.
