@@ -24,6 +24,7 @@ Su-Genk adalah robot otomatis yang dapat berjalan lurus mengikuti jalur di antar
 4. **Centering** dilakukan dengan menyesuaikan PWM motor kiri dan kanan berdasarkan:
    - Selisih sudut dari arah lurus (`changePWM_sudut`)
    - Selisih jarak dari dinding (`changePWM_jarak`)
+Menggunakan complementary filtr, PWM motor akan menjadi total dari PWM_dasar, changePWM_sudut, dan changePWM_jarak. 
 5. **Rumus PWM akhir**:
 <pre>
 PWM_kiri = PWM_dasar_kiri + changePWM_sudut_kiri + changePWM_jarak_kiri
