@@ -1,7 +1,4 @@
 // Ini merupakan kode utama yang di upload pada mikrokontroler.
-
-  
-
 #include <Wire.h> 
 
 // ======= Motor Pin ==========
