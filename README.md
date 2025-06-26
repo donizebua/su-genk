@@ -1,41 +1,53 @@
-Ini adalah logika program robot sebagai gambaran cara kerja kodenya
+# 🔥 FireFighter Robot — Autonomous Wall Following Robot
 
-Robot menggunakan dua motor DC yang dikendalikan oleh Arduino dan sensor IMU MPU6050 untuk navigasi arah.
+FireFighter adalah robot otomatis yang dapat berjalan lurus mengikuti jalur di antara dua dinding dan melakukan belokan 90° secara cerdas menggunakan sensor **IMU MPU6050** dan **3 sensor ultrasonik HC-SR04**. Robot ini dirancang untuk tetap berada di tengah jalur dan mengambil keputusan arah secara mandiri.
 
-Sensor IMU dikalibrasi saat awal menyala, sehingga sudut awal dianggap sebagai 0° dan digunakan sebagai referensi utama untuk arah lurus.
+---
 
-Robot bergerak lurus sambil menjaga posisinya tetap di tengah antara dua dinding menggunakan kombinasi sensor IMU dan tiga sensor ultrasonik HC-SR04 (kiri, kanan, dan depan).
+## 🚀 Fitur Utama
 
-Proses centering dilakukan dengan menyesuaikan PWM motor kiri dan kanan berdasarkan data sudut dari IMU dan jarak dari sensor ultrasonik.
+- **Kalibrasi IMU otomatis** saat startup, menjadikan arah awal sebagai sudut 0° (referensi lurus).
+- **Gerak lurus dengan centering**, menjaga robot tetap di tengah antara dua dinding menggunakan kombinasi sensor IMU dan ultrasonik.
+- **Belok otomatis 90°** berdasarkan deteksi dinding depan dan pemilihan arah jalur terbuka.
+- **Reset sudut IMU setelah belok**, agar orientasi baru dianggap sebagai arah lurus.
+- **Kalibrasi mudah** dengan parameter konstanta dan offset yang dapat disesuaikan.
 
-Sudut dari IMU digunakan untuk mendeteksi apakah robot melenceng ke kiri atau ke kanan dari arah 0°, lalu menghitung perubahan PWM motor untuk mengoreksi arah.
+---
 
-Jika sudut berada pada domain kiri (1–179°), maka PWM motor kiri ditambah agar robot mengarah kembali ke kanan (lurus).
+## ⚙️ Cara Kerja Logika Program
 
-Jika sudut berada pada domain kanan (181–359°), maka PWM motor kanan ditambah agar robot mengarah kembali ke kiri (lurus).
+1. Robot menggunakan dua motor DC dan dikendalikan oleh Arduino.
+2. Saat dinyalakan, **IMU dikalibrasi** untuk menetapkan arah 0° sebagai acuan lurus.
+3. Robot berjalan lurus dengan tetap menjaga posisi **di tengah antara dua dinding** menggunakan:
+   - Sudut dari IMU (untuk arah)
+   - Jarak dari sensor ultrasonik kiri dan kanan (untuk posisi)
+4. **Centering** dilakukan dengan menyesuaikan PWM motor kiri dan kanan berdasarkan:
+   - Selisih sudut dari arah lurus (`changePWM_sudut`)
+   - Selisih jarak dari dinding (`changePWM_jarak`)
+5. **Rumus PWM akhir**:
+    PWM_kiri = PWM_dasar_kiri + changePWM_sudut_kiri + changePWM_jarak_kiri
+    PWM_kanan = PWM_dasar_kanan + changePWM_sudut_kanan + changePWM_jarak_kanan
+6. Jika sudut berada di **domain kiri (1–179°)** → PWM motor kiri ditambah (belok kanan).
+7. Jika sudut berada di **domain kanan (181–359°)** → PWM motor kanan ditambah (belok kiri).
+8. Jika **jarak sensor < offset (mis. 15 cm)** → PWM motor sisi itu ditambah agar menjauh dari dinding.
+9. Jika **sensor depan mendeteksi dinding (≤ 15 cm)**:
+- Robot berhenti 1 detik
+- Membaca jarak kiri dan kanan
+- Jika kanan lebih luas → belok kanan ke sudut **270°**
+- Jika kiri lebih luas → tetap belok kanan ke sudut **90°** (karena keterbatasan mekanik)
+10. Selama proses belok:
+ - **Hanya IMU yang aktif**, sensor ultrasonik dinonaktifkan
+ - Setelah sudut target tercapai → robot berhenti 1 detik
+ - Sudut IMU di-reset ke 0° untuk orientasi baru
+11. Robot kembali berjalan lurus dan mengulang proses saat menemui dinding di depan.
 
-Perubahan PWM akibat sudut dihitung menggunakan rumus changePWM = |sudut saat ini - titik referensi| × konstanta, dan konstanta ini bisa diatur secara manual.
+---
 
-Sensor ultrasonik digunakan untuk menjaga jarak robot dari dinding kiri dan kanan, khususnya jika terlalu dekat.
+## 🛠️ Parameter yang Dapat Dikustomisasi
 
-Jika jarak dari salah satu sisi kurang dari offset tertentu (misalnya 15 cm), maka PWM motor di sisi tersebut akan ditambah untuk menjauhkan robot dari dinding.
-
-Perubahan PWM akibat jarak juga dihitung menggunakan rumus changePWM = |offset - jarak terbaca| × konstanta, dan memiliki konstanta terpisah dari konstanta sudut.
-
-Total PWM akhir untuk masing-masing motor dihitung dari PWM dasar + perubahan akibat sudut + perubahan akibat jarak.
-
-Jika sensor depan mendeteksi dinding dalam jarak ≤ 15 cm, robot akan berhenti selama 1 detik untuk melakukan analisis belokan.
-
-Saat berhenti, robot membandingkan jarak dari sensor kiri dan kanan untuk menentukan arah jalur terbuka.
-
-Jika jalur lebih terbuka di kanan, robot akan berbelok kanan hingga mencapai sudut 270° berdasarkan IMU.
-
-Jika jalur lebih terbuka di kiri, robot tetap akan berbelok ke kanan hingga mencapai sudut 90° karena keterbatasan mekanik pada arah belok.
-
-Selama proses belok, hanya IMU yang digunakan sebagai acuan, sedangkan sensor jarak tidak aktif untuk centering.
-
-Setelah selesai belok, robot akan berhenti selama 1 detik lalu mereset sudut IMU kembali ke 0° sebagai referensi baru.
-
-Robot kemudian melanjutkan kembali pergerakan lurus dan proses centering, dan siklus akan berulang saat bertemu dinding lagi.
-
-Semua konstanta untuk perubahan PWM berdasarkan sudut dan jarak serta nilai offset dapat dikalibrasi untuk penyesuaian performa robot.
+- `konstantaPWM_sudut_kiri` — sensitivitas koreksi sudut kiri
+- `konstantaPWM_sudut_kanan` — sensitivitas koreksi sudut kanan
+- `konstantaPWM_jarak_kiri` — sensitivitas koreksi jarak ke dinding kiri
+- `konstantaPWM_jarak_kanan` — sensitivitas koreksi jarak ke dinding kanan
+- `offset_jarak` — batas minimal jarak agar koreksi posisi diaktifkan (misalnya 15 cm)
+- `PWM_dasar_kiri` dan `PWM_dasar_kanan` — kecepatan dasar robot saat lurus
